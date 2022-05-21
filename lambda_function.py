@@ -69,7 +69,7 @@ def lambda_handler(request, context):
             endpoint_id = request['directive']['endpoint']['endpointId']
             correlation_token = request['directive']['header']['correlationToken']
             discovery_response = AlexaResponse(namespace='Alexa', name='StateReport', token=token, endpoint_id=endpoint_id, correlation_token=correlation_token)
-            discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value='OK')
+            discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value='UNREACHABLE')
             discovery_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value='ON')
             discovery_response.add_context_property(namespace='Alexa.ColorController', name='color', value={"hue": 120, "saturation": 1, "brightness": 1})
             return send_response(discovery_response.get())
@@ -94,7 +94,7 @@ def lambda_handler(request, context):
                 endpoint_id='sample-bulb-01',
                 capabilities=[capability_alexa, capability_alexa_endpointhealth, capability_alexa_colorcontroller, capability_alexa_powercontroller])
             token = request['directive']['payload']['scope']['token']
-            discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value='UNREACHABLE')
+            discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value='OK')
             discovery_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value='ON')
             discovery_response.add_context_property(namespace='Alexa.ColorController', name='color', value={"hue": 360, "saturation": 1, "brightness": 1})
             return send_response(discovery_response.get())
