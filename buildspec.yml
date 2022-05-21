@@ -5,11 +5,11 @@ phases:
       python: 3.8
     commands:
       - echo "Installing dependencies..."
-      - pip install -r requirements.txt
+      - pip3 install -r requirements.txt
   build:
     commands:
       - echo "Zipping deployment package..."
-      - zip -g deployment_package.zip lambda_function.py response.py
+      - zip -g deployment_package.zip lambda_function.py response.py env
   post_build:
     commands:
       - echo "Updating lambda Function..."
