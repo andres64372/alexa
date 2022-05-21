@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 # Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # SPDX-License-Identifier: LicenseRef-.amazon.com.-AmznSL-1.0
