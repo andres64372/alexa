@@ -115,6 +115,7 @@ def lambda_handler(request, context):
     if namespace == 'Alexa.ColorController':
         # The directive to TurnOff or TurnOn the light bulb.
         # Note: This example code always returns a success response.
+        token = request['directive']['endpoint']['scope']['token']
         endpoint_id = request['directive']['endpoint']['endpointId']
         color_state_value = request['directive']['payload']['color']
         correlation_token = request['directive']['header']['correlationToken']
@@ -183,8 +184,6 @@ def hsl_to_int(color):
     saturation = float(color["saturation"])
     brightness = float(color["brightness"])
     rgb = colorsys.hsv_to_rgb(hue, saturation, brightness)
-    print(hue)
-    print(rgb)
     hex = '0x'+''.join(["%0.2X" % int(255*c) for c in rgb])
     return int(hex, base=16)
 #update_device_state('', 'powerState', 'OFF')
