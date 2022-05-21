@@ -77,11 +77,18 @@ def lambda_handler(request, context):
             token = request['directive']['endpoint']['scope']['token']
             endpoint_id = request['directive']['endpoint']['endpointId']
             correlation_token = request['directive']['header']['correlationToken']
+            state = query_device(token, endpoint_id)
+            OnOff = "ON" if state["OnOff"]["on"] else "OFF"
+            if state["ColorSetting"]["color"].get("spectrumRGB"):
+                Color = int_to_hsl(state["ColorSetting"]["color"]["spectrumRGB"])
+            else:
+                Color = {"hue":0, "saturation":0, "brightness":1}
+            Online = {"OK"} if state["Online"]["online"] else {"value": "UNREACHABLE","reason":"INTERNET_UNREACHABLE"}
             discovery_response = AlexaResponse(namespace='Alexa', name='StateReport', token=token, endpoint_id=endpoint_id, correlation_token=correlation_token)
             #discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value={'value': 'UNREACHABLE','reason':'INTERNET_UNREACHABLE'})
-            discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value={'value': 'OK'})
-            discovery_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value='OFF')
-            discovery_response.add_context_property(namespace='Alexa.ColorController', name='color', value={"hue": 120, "saturation": 1, "brightness": 1})
+            discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value=Online)
+            discovery_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value=OnOff)
+            discovery_response.add_context_property(namespace='Alexa.ColorController', name='color', value=Color)
             return send_response(discovery_response.get())
 
     if namespace == 'Alexa.Discovery':
@@ -179,6 +186,13 @@ def get_devices(token):
     results = response.json()
     return results['list'], results['states']
 
+def query_device(token, device):
+    response = requests.get(f"{URL}/query?device={device}",
+            headers={'Authorization': f'Bearer {token}'}
+        )
+    results = response.json()
+    return results
+
 def hsl_to_int(color):
     hue = float(color["hue"]/360)
     saturation = float(color["saturation"])
@@ -191,7 +205,7 @@ def int_to_hsl(color):
     h = hex(color)[2:]
     rgb = tuple(int(h[i:i+2], 16)/255 for i in (0, 2, 4))
     hsl = colorsys.rgb_to_hsv(rgb[0],rgb[1],rgb[2])
-    return hsl
+    return {"hue":hsl[0], "saturation":hsl[1], "brightness":hsl[2]}
 #update_device_state('', 'powerState', 'OFF')
 #get_devices()
 
