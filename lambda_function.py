@@ -21,6 +21,7 @@ from response import AlexaResponse
 import jwt
 import requests
 import datetime
+import colorsys
 
 SECRET = 'R1BhE53$yt76$RR1hB5YJM'
 URL = 'https://retropixelapi.herokuapp.com'
@@ -117,9 +118,9 @@ def lambda_handler(request, context):
         endpoint_id = request['directive']['endpoint']['endpointId']
         color_state_value = request['directive']['payload']['color']
         correlation_token = request['directive']['header']['correlationToken']
-
+        color = hsl_to_int(color_state_value)
         # Check for an error when setting the state.
-        device_set = update_device_state(endpoint_id=endpoint_id, state='color', value=color_state_value)
+        device_set = update_device_state(endpoint_id=endpoint_id, state='color', value=color)
         if not device_set:
             return AlexaResponse(
                 name='ErrorResponse',
@@ -159,9 +160,13 @@ def update_device_state(endpoint_id, state, value, token):
     if state == 'powerState':
         topic = f'{endpoint_id}/OnOff'
         payload = 'true' if value == 'ON' else 'false'
-        response = requests.get(f"{URL}/set?topic={topic}&payload={payload}",
-            headers={'Authorization': f'Bearer {token}'}
-        )
+    if state == 'color':
+        topic = f'{endpoint_id}/Color'
+        payload = str(value)
+
+    response = requests.get(f"{URL}/set?topic={topic}&payload={payload}",
+        headers={'Authorization': f'Bearer {token}'}
+    )
     # attribute_key = state + 'Value'
     # result = stubControlFunctionToYourCloud(endpointId, token, request);
     return True
@@ -173,5 +178,16 @@ def get_devices(token):
     results = response.json()
     return results['list'], results['states']
 
+def hsl_to_int(color):
+    hue = float(color["hue"]/360)
+    saturation = float(color["saturation"])
+    brightness = float(color["brightness"])
+    rgb = colorsys.hsv_to_rgb(hue, saturation, brightness)
+    print(hue)
+    print(rgb)
+    hex = '0x'+''.join(["%0.2X" % int(255*c) for c in rgb])
+    return int(hex, base=16)
 #update_device_state('', 'powerState', 'OFF')
 #get_devices()
+
+#print(hsl_to_int({"hue":360,"saturation":1,"brightness":1}))
