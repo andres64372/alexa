@@ -69,7 +69,8 @@ def lambda_handler(request, context):
             endpoint_id = request['directive']['endpoint']['endpointId']
             correlation_token = request['directive']['header']['correlationToken']
             discovery_response = AlexaResponse(namespace='Alexa', name='StateReport', token=token, endpoint_id=endpoint_id, correlation_token=correlation_token)
-            discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value={'value': 'UNREACHABLE','reason':'INTERNET_UNREACHABLE'})
+            #discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value={'value': 'UNREACHABLE','reason':'INTERNET_UNREACHABLE'})
+            discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value={'value': 'OK'})
             discovery_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value='OFF')
             discovery_response.add_context_property(namespace='Alexa.ColorController', name='color', value={"hue": 120, "saturation": 1, "brightness": 1})
             return send_response(discovery_response.get())
@@ -132,7 +133,6 @@ def lambda_handler(request, context):
                 payload={'type': 'ENDPOINT_UNREACHABLE', 'message': 'Unable to reach endpoint database.'}).get()
 
         directive_response = AlexaResponse(correlation_token=correlation_token)
-        directive_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value={'value': 'UNREACHABLE','reason':'INTERNET_UNREACHABLE'})
         directive_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value=power_state_value)
         return send_response(directive_response.get())
 
