@@ -18,6 +18,14 @@ import logging
 
 from response import AlexaResponse
 
+import jwt
+import requests
+import datetime
+
+SECRET = 'R1BhE53$yt76$RR1hB5YJM'
+URL = 'https://retropixelapi.herokuapp.com'
+token = jwt.encode({"token_type": "access","user": "admin","exp":datetime.datetime.now() + datetime.timedelta(hours=24)}, SECRET, algorithm="HS256")
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -144,6 +152,14 @@ def send_response(response):
 
 # Make the call to your device cloud for control
 def update_device_state(endpoint_id, state, value):
+    if state == 'powerState':
+        endpoint_id = 'LIGHT_aznnl6JAJUxIyPFKgGDEA'
+        topic = f'{endpoint_id}/OnOff'
+        payload = 'true' if value == 'ON' else 'false'
+        requests.post(f"{URL}/set?topic{topic}=&payload={payload}",
+            headers={'Content-Type': 'application/json', 
+                    'Authorization': f'Bearer {token}'}
+        )
     # attribute_key = state + 'Value'
     # result = stubControlFunctionToYourCloud(endpointId, token, request);
     return True
