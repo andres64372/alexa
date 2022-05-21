@@ -202,6 +202,7 @@ def hsl_to_int(color):
 
 def int_to_hsl(color):
     h = hex(color)[2:]
+    print(h)
     rgb = tuple(int(h[i:i+2], 16)/255 for i in (0, 2, 4))
     hsl = colorsys.rgb_to_hsv(rgb[0],rgb[1],rgb[2])
     return {"hue":360*hsl[0], "saturation":hsl[1], "brightness":hsl[2]}
