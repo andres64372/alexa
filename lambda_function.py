@@ -84,8 +84,10 @@ def lambda_handler(request, context):
             else:
                 Color = {"hue":0, "saturation":0, "brightness":1}
             Online = {"OK"} if state["Online"]["online"] else {"value": "UNREACHABLE","reason":"INTERNET_UNREACHABLE"}
+            print(OnOff)
+            print(Online)
+            print(Color)
             discovery_response = AlexaResponse(namespace='Alexa', name='StateReport', token=token, endpoint_id=endpoint_id, correlation_token=correlation_token)
-            #discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value={'value': 'UNREACHABLE','reason':'INTERNET_UNREACHABLE'})
             discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value=Online)
             discovery_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value=OnOff)
             discovery_response.add_context_property(namespace='Alexa.ColorController', name='color', value=Color)
