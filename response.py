@@ -45,7 +45,6 @@ class AlexaResponse:
 
     def add_context_property(self, **kwargs):
         self.context_properties.append(self.create_context_property(**kwargs))
-        self.context_properties.append(self.create_context_property())
 
 
     def add_cookie(self, key, value):
@@ -65,7 +64,7 @@ class AlexaResponse:
             'name': kwargs.get('name', 'connectivity'),
             'value': kwargs.get('value', {'value': 'OK'}),
             'timeOfSample': get_utc_timestamp(),
-            'uncertaintyInMilliseconds': kwargs.get('uncertainty_in_milliseconds', 0)
+            'uncertaintyInMilliseconds': kwargs.get('uncertainty_in_milliseconds', 200)
         }
 
     #def create_payload_endpoint(self, **kwargs):
