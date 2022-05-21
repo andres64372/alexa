@@ -121,7 +121,7 @@ def lambda_handler(request, context):
         correlation_token = request['directive']['header']['correlationToken']
         color = hsl_to_int(color_state_value)
         # Check for an error when setting the state.
-        device_set = update_device_state(endpoint_id=endpoint_id, state='color', value=color)
+        device_set = update_device_state(endpoint_id=endpoint_id, state='color', value=color, token=token)
         if not device_set:
             return AlexaResponse(
                 name='ErrorResponse',
@@ -147,7 +147,7 @@ def lambda_handler(request, context):
                 payload={'type': 'ENDPOINT_UNREACHABLE', 'message': 'Unable to reach endpoint database.'}).get()
 
         directive_response = AlexaResponse(correlation_token=correlation_token)
-        directive_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value=power_state_value, token=token)
+        directive_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value=power_state_value)
         return send_response(directive_response.get())
 
 # Send the response
