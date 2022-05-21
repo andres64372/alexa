@@ -73,8 +73,8 @@ class AlexaResponse:
         # Return the proper structure expected for the endpoint.
         # All discovery responses must include the additionAttributes
         additionalAttributes = {
-            'manufacturer': kwargs.get('manufacturer', 'Sample Manufacturer'),
-            'model': kwargs.get('model_name', 'Sample Model'),
+            'manufacturer': kwargs.get('manufacturer', 'Retro Pixel'),
+            'model': kwargs.get('model_name', 'Pixel Strip'),
             'serialNumber': kwargs.get('serial_number', 'U11112233456'),
             'firmwareVersion': kwargs.get('firmware_version', '1.24.2546'),
             'softwareVersion': kwargs.get('software_version', '1.036'),
@@ -83,11 +83,11 @@ class AlexaResponse:
 
         endpoint = {
             'capabilities': kwargs.get('capabilities', []),
-            'description': kwargs.get('description', 'Smart Home Tutorial: Virtual smart light bulb'),
+            'description': kwargs.get('description', 'Tiras Led Inteligentes'),
             'displayCategories': kwargs.get('display_categories', ['LIGHT']),
             'endpointId': kwargs.get('endpoint_id', 'endpoint_' + "%0.6d" % random.randint(0, 999999)),
             'friendlyName': kwargs.get('friendly_name', 'Luz'),
-            'manufacturerName': kwargs.get('manufacturer_name', 'Sample Manufacturer')
+            'manufacturerName': kwargs.get('manufacturer_name', 'Retro Pixel')
         }
 
         endpoint['additionalAttributes'] = kwargs.get('additionalAttributes', additionalAttributes)

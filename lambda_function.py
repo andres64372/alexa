@@ -24,7 +24,7 @@ import datetime
 
 SECRET = 'R1BhE53$yt76$RR1hB5YJM'
 URL = 'https://retropixelapi.herokuapp.com'
-token = jwt.encode({"token_type": "access","user": "admin","exp":datetime.datetime.now() + datetime.timedelta(hours=24)}, SECRET, algorithm="HS256")
+#token = jwt.encode({"token_type": "access","user": "164521328368ddfbf9eac4cc94","exp":datetime.datetime.now() + datetime.timedelta(hours=24)}, SECRET, algorithm="HS256")
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -85,6 +85,8 @@ def lambda_handler(request, context):
 
     if namespace == 'Alexa.Discovery':
         if name in ['Discover', 'Discover.Response']:
+            token = request['directive']['payload']['scope']['token']
+            device_list, device_names = get_devices(token)
             # The request to discover the devices the skill controls.
             discovery_response = AlexaResponse(namespace='Alexa.Discovery', name='Discover.Response')
             # Create the response and add the light bulb capabilities.
@@ -98,11 +100,12 @@ def lambda_handler(request, context):
             capability_alexa_endpointhealth = discovery_response.create_payload_endpoint_capability(
                 interface='Alexa.EndpointHealth',
                 supported=[{'name': 'connectivity'}])
-            discovery_response.add_payload_endpoint(
-                friendly_name='Luz',
-                endpoint_id='sample-bulb-01',
-                capabilities=[capability_alexa, capability_alexa_endpointhealth, capability_alexa_colorcontroller, capability_alexa_powercontroller])
-            token = request['directive']['payload']['scope']['token']
+            
+            for device in device_list:
+                discovery_response.add_payload_endpoint(
+                    friendly_name=device_names[device]['name'],
+                    endpoint_id=device,
+                    capabilities=[capability_alexa, capability_alexa_endpointhealth, capability_alexa_colorcontroller, capability_alexa_powercontroller])
             discovery_response.add_context_property(namespace='Alexa.EndpointHealth', name='connectivity', value='OK')
             discovery_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value='ON')
             discovery_response.add_context_property(namespace='Alexa.ColorController', name='color', value={"hue": 360, "saturation": 1, "brightness": 1})
@@ -151,15 +154,24 @@ def send_response(response):
     return response
 
 # Make the call to your device cloud for control
-def update_device_state(endpoint_id, state, value):
+def update_device_state(endpoint_id, state, value, token):
     if state == 'powerState':
         endpoint_id = 'LIGHT_aznnl6JAJUxIyPFKgGDEA'
         topic = f'{endpoint_id}/OnOff'
         payload = 'true' if value == 'ON' else 'false'
-        requests.post(f"{URL}/set?topic{topic}=&payload={payload}",
-            headers={'Content-Type': 'application/json', 
-                    'Authorization': f'Bearer {token}'}
+        response = requests.get(f"{URL}/set?topic={topic}&payload={payload}",
+            headers={'Authorization': f'Bearer {token}'}
         )
     # attribute_key = state + 'Value'
     # result = stubControlFunctionToYourCloud(endpointId, token, request);
     return True
+
+def get_devices(token):
+    response = requests.get(f"{URL}/devices",
+            headers={'Authorization': f'Bearer {token}'}
+        )
+    results = response.json()
+    return results['list'], results['states']
+
+#update_device_state('', 'powerState', 'OFF')
+get_devices()
