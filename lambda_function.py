@@ -147,7 +147,7 @@ def lambda_handler(request, context):
                 payload={'type': 'ENDPOINT_UNREACHABLE', 'message': 'Unable to reach endpoint database.'}).get()
 
         directive_response = AlexaResponse(correlation_token=correlation_token)
-        directive_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value=power_state_value)
+        directive_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value=power_state_value, token=token)
         return send_response(directive_response.get())
 
 # Send the response
@@ -186,7 +186,13 @@ def hsl_to_int(color):
     rgb = colorsys.hsv_to_rgb(hue, saturation, brightness)
     hex = '0x'+''.join(["%0.2X" % int(255*c) for c in rgb])
     return int(hex, base=16)
+
+def int_to_hsl(color):
+    h = hex(color)[2:]
+    rgb = tuple(int(h[i:i+2], 16)/255 for i in (0, 2, 4))
+    hsl = colorsys.rgb_to_hsv(rgb[0],rgb[1],rgb[2])
+    return hsl
 #update_device_state('', 'powerState', 'OFF')
 #get_devices()
 
-#print(hsl_to_int({"hue":360,"saturation":1,"brightness":1}))
+#print(int_to_hsl(16777215))
