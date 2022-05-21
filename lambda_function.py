@@ -132,12 +132,13 @@ def lambda_handler(request, context):
     if namespace == 'Alexa.PowerController':
         # The directive to TurnOff or TurnOn the light bulb.
         # Note: This example code always returns a success response.
+        token = request['directive']['endpoint']['scope']['token']
         endpoint_id = request['directive']['endpoint']['endpointId']
         power_state_value = 'OFF' if name == 'TurnOff' else 'ON'
         correlation_token = request['directive']['header']['correlationToken']
 
         # Check for an error when setting the state.
-        device_set = update_device_state(endpoint_id=endpoint_id, state='powerState', value=power_state_value)
+        device_set = update_device_state(endpoint_id=endpoint_id, state='powerState', value=power_state_value, token=token)
         if not device_set:
             return AlexaResponse(
                 name='ErrorResponse',
