@@ -156,7 +156,6 @@ def send_response(response):
 # Make the call to your device cloud for control
 def update_device_state(endpoint_id, state, value, token):
     if state == 'powerState':
-        endpoint_id = 'LIGHT_aznnl6JAJUxIyPFKgGDEA'
         topic = f'{endpoint_id}/OnOff'
         payload = 'true' if value == 'ON' else 'false'
         response = requests.get(f"{URL}/set?topic={topic}&payload={payload}",
@@ -174,4 +173,4 @@ def get_devices(token):
     return results['list'], results['states']
 
 #update_device_state('', 'powerState', 'OFF')
-get_devices()
+#get_devices()
