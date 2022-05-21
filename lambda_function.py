@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # Copyright 2021 Amazon.com, Inc. or its affiliates. All Rights Reserved.
 #
 # SPDX-License-Identifier: LicenseRef-.amazon.com.-AmznSL-1.0
@@ -92,7 +94,7 @@ def lambda_handler(request, context):
                 capabilities=[capability_alexa, capability_alexa_endpointhealth, capability_alexa_colorcontroller, capability_alexa_powercontroller])
             token = request['directive']['payload']['scope']['token']
             discovery_response.add_context_property(namespace='Alexa.PowerController', name='powerState', value='ON')
-            discovery_response.add_context_property(namespace='Alexa.ColorController', name='color', value={"hue": 360, "saturation": 1, "brightness": 1})
+            discovery_response.add_context_property(namespace='Alexa.ColorController', name='color', value={"hue": 120, "saturation": 1, "brightness": 1})
             return send_response(discovery_response.get())
 
     if namespace == 'Alexa.ColorController':
