@@ -201,7 +201,7 @@ def hsl_to_int(color):
     return int(hex, base=16)
 
 def int_to_hsl(color):
-    h = hex(color)[2:]
+    h = hex(color)[2:].zfill(6)
     print(h)
     rgb = tuple(int(h[i:i+2], 16)/255 for i in (0, 2, 4))
     hsl = colorsys.rgb_to_hsv(rgb[0],rgb[1],rgb[2])
